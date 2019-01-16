@@ -9,14 +9,14 @@ from tensorflow import keras
 import numpy as np
 
 
-VOCAB_SIZE = 10000
+VOCAB_SIZE = 8000
 PAD_VALUE = 0
 NUM_EPOCHS = 50
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 LEARNING_RATE = 1e-4
 MAX_SEQ_LEN = 256
-WORD_VEC_DIMS = 50
-LSTM_UNITS = 32
+WORD_VEC_DIMS = 70
+LSTM_UNITS = 64
 REGULARIZATION_CONSTANT = 0.0
 
 input_seq = tf.placeholder(tf.int32, [None, MAX_SEQ_LEN], name='input_seq')
