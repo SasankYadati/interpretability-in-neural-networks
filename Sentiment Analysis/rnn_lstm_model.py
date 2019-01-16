@@ -9,15 +9,14 @@ from tensorflow import keras
 import numpy as np
 
 
-VOCAB_SIZE = 8000
+VOCAB_SIZE = 10000
 PAD_VALUE = 0
 NUM_EPOCHS = 50
-BATCH_SIZE = 32
-LEARNING_RATE = 1e-4
+BATCH_SIZE = 64
+LEARNING_RATE = 1e-3
 MAX_SEQ_LEN = 256
-WORD_VEC_DIMS = 70
+WORD_VEC_DIMS = 50
 LSTM_UNITS = 64
-REGULARIZATION_CONSTANT = 0.0
 
 input_seq = tf.placeholder(tf.int32, [None, MAX_SEQ_LEN], name='input_seq')
 target_class = tf.placeholder(tf.float32, [None, 1], name='target_class')
@@ -79,20 +78,19 @@ def buildModel():
     # embedding layer
     word_vec = tf.Variable(tf.truncated_normal([VOCAB_SIZE, WORD_VEC_DIMS]), dtype=tf.float32, name='Word-Vectors')
     input_vec = tf.nn.embedding_lookup(word_vec, input_seq)
-    print(input_vec.shape)
 
     # rnn lstm layer
     rnn_cell = tf.nn.rnn_cell.LSTMCell(LSTM_UNITS)
-    rnn_cell = tf.contrib.rnn.DropoutWrapper(cell=rnn_cell, output_keep_prob=0.25)
+    rnn_cell = tf.contrib.rnn.DropoutWrapper(cell=rnn_cell, output_keep_prob=0.5)
 
     # finally, the rnn put together
     output, _ = tf.nn.dynamic_rnn(rnn_cell, input_vec, dtype=tf.float32)
     
     output = tf.layers.flatten(output)
 
-    output = tf.layers.dense(output, 128)
+    output = tf.layers.dense(output, 32)
     output = tf.nn.relu(output)
-    
+
     output = tf.layers.dense(output, 1)
     output = tf.nn.sigmoid(output)
 
@@ -132,9 +130,6 @@ if __name__ == '__main__':
     imdb, train_x, train_y, valid_x, valid_y, test_x, test_y = loadData()
     train_x, valid_x, test_x = preprocessData(train_x, valid_x, test_x)
 
-    print(train_x.shape) # 20000 x 256
-    print(train_y.shape) # 20000 x 1
-    
     optimizer, loss, output, metrics, train_summaries, valid_summaries = buildModel()
     
     num_batches = train_x.shape[0] // BATCH_SIZE
