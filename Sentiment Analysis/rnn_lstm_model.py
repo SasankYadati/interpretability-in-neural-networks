@@ -140,6 +140,7 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         # sess = tf_debug.LocalCLIDebugWrapperSession(sess)
         writer = tf.summary.FileWriter(logdir='LOGS/', graph=sess.graph)
+        saver = tf.train.Saver()
         # merged = tf.summary.merge_all()
         
         sess.run([initializer_g, initializer_l])
@@ -164,5 +165,6 @@ if __name__ == '__main__':
                 writer.add_summary(t_summ, epoch)
             for v_summ in validation_summary:
                 writer.add_summary(v_summ, epoch)
-            
+        
+        saver.save(sess, 'trained-models/rnn-lstm-model')
         writer.close()
