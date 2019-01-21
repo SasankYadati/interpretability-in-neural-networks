@@ -92,7 +92,8 @@ def buildModel():
     output = tf.nn.relu(output)
 
     output = tf.layers.dense(output, 1)
-    output = tf.nn.sigmoid(output)
+    output = tf.nn.sigmoid(output, name='output')
+    prediction = tf.constant(output, name='prediction')
 
     train_summaries = []
     valid_summaries = []
