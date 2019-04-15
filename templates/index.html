@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+    <title>
+        Explainable AI
+    </title>
+</head>
+<body>
+    <form id="canvas-form" method="POST">
+        <div id="canvas">Draw a digit!<br/></div>
+        <input type="submit" value="Go!"/>
+    </form>
+    <a id="link"></a>
+    <script src="{{ url_for('static', filename='canvas.js') }}"></script>
+    <script>
+        form = document.getElementById("canvas-form");
+        form.onsubmit = function() {
+            saveImage();
+        }
+        function saveImage(){
+            var link = document.getElementById('link');
+            link.setAttribute('download', 'digit.png');
+            link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+            link.click();
+            console.log("saved");
+        }
+    </script>
+</body>
+
+</html>
