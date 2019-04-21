@@ -3,27 +3,176 @@
     <title>
         Explainable AI
     </title>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script type=text/javascript>
+
+      $(function() {
+  $('#viewBtn').click(function() {
+      $.ajax({
+          url: '/api/click',
+          data: $('form').serialize(),
+          type: 'POST',
+          success: function(response) {
+            console.log(response);
+              $("#imgToBeDisp").attr("src",'/static/'+response);
+          },
+          error: function(error) {
+              console.log(error);
+          }
+      });
+  });
+  var res;
+  $('#subBtn').click(function() {
+
+      $.ajax({
+          url: '/api/output',
+          data: $('form').serialize(),
+          type: 'POST',
+          success: function(response) {
+            console.log(response);
+            res = response;
+            onData();
+          },
+          error: function(error) {
+              console.log(error);
+          }
+      });
+  });
+
+  function onData()
+  {
+    console.log(res);
+    var op_class = res.output_class;
+    $("#originalImg").attr("src",res.image_file_name);
+    $("#originalImg").css("display",'');
+    console.log(op_class);
+    $("#classop").text("The output class is "+op_class);
+    $("#conceptop").text("The following image gives us an overview of the Theta Matrix Stability for the Input and the noisy image");
+    $("#conceptop").css("display","");
+
+    $("#groundingop").css("display","");
+    $("#groundingop").text("The following images are the ones similar to the current test image from which the model learnt.");
+
+    $("#conceptsImg").attr("src",res.theta_diff);
+    $('#conceptsImg').css("display",'');
+
+    $("#groundingImg").attr("src",res.grounding);
+    $('#groundingImg').css("display",'');
+
+    $("#conceptop_exp").css("display","");
+    $("#conceptop_exp").text("The encoding stability value is : "+res.mse_encoded);
+    $("#conceptop1").css("display","");
+    $("#conceptop1_exp").text("The theta stability value is : "+res.mse_theta);
+    $("#conceptop1_exp").css("display","");
+    
+    $("#download").css("display","");
+    var downloadName = "static/test.pdf"
+    $("#download").attr("action",downloadName);
+  }
+
+});
+    </script>
+
+
 </head>
 <body>
-    <form id="canvas-form" method="POST">
-        <div id="canvas">Draw a digit!<br/></div>
-        <input type="submit" value="Go!"/>
-    </form>
-    <a id="link"></a>
-    <script src="{{ url_for('static', filename='canvas.js') }}"></script>
-    <script>
-        form = document.getElementById("canvas-form");
-        form.onsubmit = function() {
-            saveImage();
-        }
-        function saveImage(){
-            var link = document.getElementById('link');
-            link.setAttribute('download', 'digit.png');
-            link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-            link.click();
-            console.log("saved");
-        }
-    </script>
+
+<div class = "container">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Self Explanations based Interpretations for MNIST</a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+      <li><a class="navbar-brand" href="https://github.com/SasankYadati/explainability-in-neural-networks"><span class="glyphicon glyphicon-user"></span>Github</a></li>
+    </ul>
+    </div>
+  </nav>
+
+<div class="container" style="margin-top:100px">
+
+  <h1 align="center">Explanations for MNIST Images</h1>
+  <br/>
+  <form  method = "post" style="margin-top:30px">
+    <div class="form-group">
+      <label for="email">Index for the test Image : </label>
+      <input type="number" class="form-control" id="number" name="index">
+    </div>
+    <button type ="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" id="viewBtn">View Image</button>
+    <button type="button" class="btn btn-info btn-lg" id="subBtn" data-toggle="modal" data-target="#infoModal">Submit</button>
+  </form>
+
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">This is the test image.</h4>
+      </div>
+      <div class="modal-body">
+
+
+        <img class="img-rounded" id="imgToBeDisp" alt="Image Here" height="100" width="100">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="infoModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Explanations</h4>
+      </div>
+      <div class="modal-body">
+        <p id="classop">Please wait while the model predicts the output and the explanation.</p>
+        <br/>
+        <img id="originalImg" alt="Image Here" height="200" width="200" style = "display : none">
+        <br/>
+        <br/>
+        <p id="conceptop_exp" style = "display : none"></p>
+        <p id="conceptop1_exp" style = "display : none"></p>
+        <br/>
+        <p id="conceptop" style = "display : none"></p>
+        <br/>
+        <img id="conceptsImg" alt="Image Here" height="400" width="500" style = "display : none">
+        <br/>
+        <br/>
+        <p id="groundingop" style = "display : none"></p>
+        <img id="groundingImg" alt="Image Here" height="400" width="500" style = "display : none">
+
+
+        <form id="download" method="get" action="" style = "display : none">
+           <button class="btn"><i class="fa fa-download"></i> Download Full Report</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+
 </body>
 
 </html>
