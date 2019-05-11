@@ -1,9 +1,5 @@
 # Explainability-in-neural-networks
 
-## Compare traditional neural networks with self explaining neural networks in terms of performance and interpretability
+## Abstract
 
-The entire project is divided into three parts.
-
-1. Obtain Performance and Interpretability metrics for the tasks of Sentiment Analysis using a LSTM and Image Classification using a CNN.
-2. Design Self Explaining Neural Networks for the same tasks and measure Performance and Interpretability.
-3. Define explanations for the task of Speech Recognition and model them for a network.
+When deployed for usage in the industry, machine learning models need to develop trust in the user so that he or she would accept the results of the model and use it. This would enhance faith as now the model would not be a black box. The results of the explanation based system must also be stable in the sense that there should not be a lot of change in the explanations for minor change in the input. Through this project, we wish to develop a self-explanation based architecture where the explanations are learnt through the training  process along with the actual task in hand. We demonstrate the same for the task of Image Classification performed on the MNIST dataset. We argue this architecture is extendable to other modalities as well. This model is shown to be better than the posteriori based approaches in terms of the stability and robustness of the explanations. The goal of this project is to develop the same and compare it with the posteriori based explanations. 
