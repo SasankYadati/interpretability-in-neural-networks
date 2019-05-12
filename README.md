@@ -1,4 +1,4 @@
-# Explainability-in-neural-networks
+# Interpretability-in-neural-networks
 
 ## Abstract
 
